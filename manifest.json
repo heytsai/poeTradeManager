@@ -8,7 +8,8 @@
         "default_icon": "logo.png"
     },
     "permissions": [
-        "webNavigation"
+        "webNavigation",
+        "tabs"
     ],
     "background": {
         "scripts": [
