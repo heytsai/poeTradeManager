@@ -10,7 +10,8 @@
     "permissions": [
         "storage",
         "webNavigation",
-        "tabs"
+        "tabs",
+        "https://www.pathofexile.com/"
     ],
     "background": {
         "scripts": [
