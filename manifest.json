@@ -8,6 +8,7 @@
         "default_icon": "logo.png"
     },
     "permissions": [
+        "storage",
         "webNavigation",
         "tabs"
     ],
