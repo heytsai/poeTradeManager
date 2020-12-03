@@ -11,8 +11,20 @@
     <title>My Test Extension Options</title>
 </head>
 <body>
-    <p>Opened Trade pages:</p>
-    <div id="list"></div>
+    <div class="card">
+        <div class="card-header">Opened Trade pages</div>
+        <ul id="list" class="collapsible expandable"></ul>
+    </div>
+
+    <!-- Templates -->
+    <template class="collapsible-element">
+        <li>
+            <div class="collapsible-header"></div>
+            <div class="collapsible-body"><span></span></div>
+<!--            <div class="collapsible-body"><span style="white-space: pre-wrap;"></span></div>-->
+        </li>
+    </template>
+
     <!-- JavaScript at end of body for optimized loading -->
     <script type="text/javascript" src="lib/jquery-3.5.1.js"></script>
     <script type="text/javascript" src="lib/materialize.min.js"></script>
