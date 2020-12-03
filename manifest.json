@@ -11,7 +11,8 @@
         "storage",
         "webNavigation",
         "tabs",
-        "https://www.pathofexile.com/"
+        "https://www.pathofexile.com/",
+        "https://fonts.googleapis.com/"
     ],
     "background": {
         "scripts": [
