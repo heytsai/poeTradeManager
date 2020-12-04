@@ -1,5 +1,5 @@
-function open_url() {
-  var newURL = "https://www.pathofexile.com/";
-  chrome.tabs.create({ url: newURL });
+function openOptionsPage() {
+  chrome.tabs.create({ url: "options.html" });
 }
-document.getElementById("test").addEventListener("click", open_url);
+
+document.getElementById("manage").addEventListener("click", openOptionsPage);
