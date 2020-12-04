@@ -5,22 +5,31 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Import materialize.css -->
     <link type="text/css" rel="stylesheet" href="lib/materialize.min.css"  media="screen,projection"/>
-
+    <!-- Import custom css -->
+    <link type="text/css" rel="stylesheet" href="options.css"/>
     <!-- Let browser know website is optimized for mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>My Test Extension Options</title>
 </head>
 <body>
-    <div class="card">
-        <div class="card-header">Opened Trade pages</div>
+    <div class="container">
+        <h5>Opened Trade pages</h5>
         <ul id="list" class="collapsible expandable"></ul>
     </div>
 
     <!-- Templates -->
     <template class="collapsible-element">
         <li>
-            <div class="collapsible-header"></div>
-            <div class="collapsible-body"><span></span></div>
+            <div class="collapsible-header tradeHeader">
+                <span class="title"></span>
+                <div class="switch">
+                    <label>
+                        <input type="checkbox">
+                        <span class="lever"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="collapsible-body"><span class="content"></span></div>
 <!--            <div class="collapsible-body"><span style="white-space: pre-wrap;"></span></div>-->
         </li>
     </template>

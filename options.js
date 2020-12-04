@@ -96,10 +96,15 @@ function generateCollapsibleElement(title, content) {
   const $template = getTemplate('collapsible-element');
 
   // set texts
-  const $title = $template.find('.collapsible-header');
-  const $content = $template.find('.collapsible-body span');
+  const $title = $template.find('.collapsible-header .title');
+  const $content = $template.find('.collapsible-body .content');
   $title.text(title);
   $content.text(content);
+
+  $template.find('.switch').click((event) => {
+    // event.preventDefault();
+    event.stopPropagation();
+  });
 
   return $template;
 }
