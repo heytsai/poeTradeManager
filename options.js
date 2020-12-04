@@ -14,6 +14,7 @@ const HASH_PREFIX = `${URL_TRADE}/${POE_SEASON}/`;
 const CRITERIA_PREFIX = 'require(["main"], function(){require(["trade"], function(t){    t(';
 const CRITERIA_SUFFIX = ');});});';
 const FILE_MODS = 'data/mods.json';
+const KEY_FAVORITE_SITES = 'favorite_sites';
 
 // hidden variables, should not access directly
 const _modNameMap = null;
@@ -190,6 +191,27 @@ function getModsNameMap() {
         .forEach(val => map[val['id']] = val['text']);
 
     return map;
+  });
+}
+
+// format of sites
+// [{
+//     site: {
+//         hash: '',
+//         follow: false,
+//         live: false
+//     }
+// }]
+
+function getFavoriteSites() {
+  chrome.storage.local.get([KEY_FAVORITE_SITES], function (value) {
+    return (value && value[KEY_FAVORITE_SITES]) || [];
+  });
+}
+
+function saveFavoriteSites(sites) {
+  chrome.storage.local.set({
+    KEY_FAVORITE_SITES: sites
   });
 }
 
