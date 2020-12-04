@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", listTabs);
 
 // show a list of all opened POE trade urls
 //-- TODO: also the state (activation) & mark favorite for all pages
+//-- TODO: open url if not exist
+//-- TODO: open urls not in the set?
 
 // constants
 const POE_SEASON = 'Heist'
@@ -18,43 +20,27 @@ const _modNameMap = null;
 
 // initialization
 $(document).ready(function() {
-  $('.collapsible.expandable')
-      .collapsible({accordion: false});
+  $('.collapsible.expandable').collapsible({accordion: false});
 });
 extendStringType();
 
 async function listTabs() {
-  const $list = $('#list');
-
-  // TODO: may need to package this block into promise
-  // TODO: open url if not exist
   // get all tab urls
-  chrome.tabs.query({}, function (tabs) {
-    // filter poe-trade urls
-    const poeTabs = tabs.filter((tab) => tab.url.startsWith(URL_TRADE));
+  const tabs = await getChromeTabs();
+  let poeTabUrls = tabs.map(tab => tab.url).filter(url => url.startsWith(URL_TRADE));
 
-    // sort ASC
-    poeTabs.sort((a, b) => (a < b ? -1 : (a > b ? 1 : 0)));
+  // remove duplication
+  poeTabUrls = [...new Set(poeTabUrls)];
 
-    // add url in the list
-    // TODO: count duplication?
-    // TODO: open urls not in the set?
-    poeTabs.forEach(async function(tab) {
-      const url = tab.url;
-      const title = url;
+  // sort ASC
+  poeTabUrls.sort((a, b) => (a < b ? -1 : (a > b ? 1 : 0)));
 
-      let content = 'failed to fetch';
-      if (url.startsWith(HASH_PREFIX)) {
-        // parse hash from url
-        const hash = url.replace(HASH_PREFIX, '');
-        const criteria = await getCriteria(hash);
-        content = await generateCriteriaDescription(criteria);
-      }
-
-      const $child = generateCollapsibleElement(title, content);
-      $child.appendTo($list);
-    });
-  });
+  // add page info to the list
+  const $list = $('#list');
+  for (const url of poeTabUrls) {
+    const $child = await generatePageInfoItem(url);
+    $child.appendTo($list);
+  }
 }
 
 // add format function
@@ -81,6 +67,28 @@ function extendStringType() {
 function getTemplate(className) {
   const html = $(`template.${className}`).html();
   return $(html).clone();
+}
+
+function getChromeTabs() {
+  return new Promise(resolve => {
+    chrome.tabs.query({}, response => resolve(response));
+  });
+}
+
+async function generatePageInfoItem(url) {
+  // show page url as title
+  const title = url;
+
+  // show search criteria as content
+  let content = 'failed to fetch';
+  if (url.startsWith(HASH_PREFIX)) {
+    // parse hash from url
+    const hash = url.replace(HASH_PREFIX, '');
+    const criteria = await getCriteria(hash);
+    content = await generateCriteriaDescription(criteria);
+  }
+
+  return generateCollapsibleElement(title, content);
 }
 
 function generateCollapsibleElement(title, content) {
