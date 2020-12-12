@@ -132,7 +132,7 @@ function getCriteria(hash) {
 function generateCriteriaReplacer(modNameMap) {
   return function (key, value) {
     // Filtering out properties
-    if (typeof value === 'object' && value.disabled === true) {
+    if (value && typeof value === 'object' && value.disabled === true) {
       return undefined;
     } else if (key === 'disabled') {
       return undefined;
@@ -141,13 +141,13 @@ function generateCriteriaReplacer(modNameMap) {
     }
 
     // replace id with text
-    if (typeof value === 'object' && 'id' in value) {
+    if (value && typeof value === 'object' && 'id' in value) {
       value.text = modNameMap[value.id];
       delete value.id;
     }
 
     // flatter option type info
-    if (typeof value === 'object' && 'option' in value) {
+    if (value && typeof value === 'object' && 'option' in value) {
       value = value.option;
     }
 
