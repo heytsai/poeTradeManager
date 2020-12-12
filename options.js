@@ -11,6 +11,7 @@ const URL_TRADE = 'https://www.pathofexile.com/trade/search';
 const URL_HASH_FORMAT = `${URL_TRADE}/${POE_SEASON}/{hash}`;
 const URL_CRITERIA_SEARCH = `https://www.pathofexile.com/api/trade/search/${POE_SEASON}`;
 const HASH_PREFIX = `${URL_TRADE}/${POE_SEASON}/`;
+const LIVE_SUFFIX = '/live';
 const CRITERIA_PREFIX = 'require(["main"], function(){require(["trade"], function(t){    t(';
 const CRITERIA_SUFFIX = ');});});';
 const FILE_MODS = 'data/mods.json';
@@ -81,18 +82,27 @@ async function generatePageInfoItem(url) {
   const title = url;
 
   // show search criteria as content
+  let isLive = false;
   let content = 'failed to fetch';
   if (url.startsWith(HASH_PREFIX)) {
+    // parse hash from url, url = prefix + hash + suffix
+    url = url.replace(HASH_PREFIX, '');
+
+    if (url.endsWith(LIVE_SUFFIX)) {
+      isLive = true;
+      url = url.replace(LIVE_SUFFIX, '');
+    }
+
     // parse hash from url
-    const hash = url.replace(HASH_PREFIX, '');
+    const hash = url;
     const criteria = await getCriteria(hash);
     content = await generateCriteriaDescription(criteria);
   }
 
-  return generateCollapsibleElement(title, content);
+  return generateCollapsibleElement(title, content, isLive);
 }
 
-function generateCollapsibleElement(title, content) {
+function generateCollapsibleElement(title, content, isLive) {
   // get template
   const $template = getTemplate('collapsible-element');
 
@@ -102,7 +112,10 @@ function generateCollapsibleElement(title, content) {
   $title.text(title);
   $content.text(content);
 
-  $template.find('.switch').click((event) => {
+  // set switch button
+  const $switch = $template.find('.switch');
+  $switch.find('input').attr('checked', isLive);
+  $switch.click((event) => {
     // event.preventDefault();
     event.stopPropagation();
   });
