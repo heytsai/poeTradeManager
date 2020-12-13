@@ -42,6 +42,9 @@ async function listTabs() {
   for (const url of poeTabUrls) {
     const $child = await generatePageInfoItem(url);
     $child.appendTo($list);
+
+    // delay 0.3 second to prevent request be blocked by the server
+    await delay(300);
   }
 }
 
@@ -83,26 +86,34 @@ async function generatePageInfoItem(url) {
 
   // show search criteria as content
   let isLive = false;
+  let count = 0;
   let content = 'failed to fetch';
+  let hash = '';
   if (url.startsWith(HASH_PREFIX)) {
     // parse hash from url, url = prefix + hash + suffix
-    url = url.replace(HASH_PREFIX, '');
+    hash = url.replace(HASH_PREFIX, '');
 
-    if (url.endsWith(LIVE_SUFFIX)) {
+    if (hash.endsWith(LIVE_SUFFIX)) {
       isLive = true;
-      url = url.replace(LIVE_SUFFIX, '');
+      hash = hash.replace(LIVE_SUFFIX, '');
     }
 
     // parse hash from url
-    const hash = url;
-    const criteria = await getCriteria(hash);
-    content = await generateCriteriaDescription(criteria);
+    try {
+      const criteria = await getCriteria(hash);
+      const searchResult = await searchCriteria(criteria);
+      count = searchResult['total'];
+      content = await generateCriteriaDescription(criteria);
+    } catch (err) {
+      // TODO: parse error
+      console.log('generatePageInfoItem: failed:', err);
+    }
   }
 
-  return generateCollapsibleElement(title, content, isLive);
+  return generateCollapsibleElement(title, content, count, isLive);
 }
 
-function generateCollapsibleElement(title, content, isLive) {
+function generateCollapsibleElement(title, content, count, isLive) {
   // get template
   const $template = getTemplate('collapsible-element');
 
@@ -111,6 +122,14 @@ function generateCollapsibleElement(title, content, isLive) {
   const $content = $template.find('.collapsible-body .content');
   $title.text(title);
   $content.text(content);
+
+  // set badge
+  const $badge = $template.find('.badge');
+  if (count > 0) {
+    $badge.text(count);
+  } else {
+    $badge.hide();
+  }
 
   // set switch button
   const $switch = $template.find('.switch');
@@ -205,6 +224,10 @@ function getModsNameMap() {
 
     return map;
   });
+}
+
+function delay(ms) {
+  return new Promise(res => setTimeout(res, ms));
 }
 
 // format of sites
