@@ -189,10 +189,12 @@ function generateCriteriaReplacer(modNameMap) {
 
 function searchCriteria(criteria) {
   // generate payload
+  const type = criteria['type'];
   const stats = criteria['stats'];
   const filters = criteria['filters'];
   const body = {
     "query": {
+      "type": type,
       "status": {"option": "online"},
       "stats": stats,
       "filters": filters
@@ -260,6 +262,7 @@ function saveFavoriteSites(sites) {
 //   "news": [],
 //   "league": "Heist",
 //   "state": {
+//     "type": "Stygian Vise",
 //     "stats": [{
 //       "type": "and",
 //       "filters": [{"id": "crafted.stat_2063695047", "disabled": false}],
