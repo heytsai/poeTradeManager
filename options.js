@@ -128,7 +128,10 @@ function generateCollapsibleElement(title, content, hash, count, isLive) {
   if (count > 0) {
     $badge.text(count);
     const url = URL_HASH_FORMAT.format({hash: hash});
-    $badge.click(() => openPageInNewTab(url));
+    $badge.click((event) => {
+      openPageInNewTab(url);
+      event.stopPropagation();
+    });
   } else {
     $badge.hide();
   }
