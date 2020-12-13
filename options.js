@@ -110,10 +110,10 @@ async function generatePageInfoItem(url) {
     }
   }
 
-  return generateCollapsibleElement(title, content, count, isLive);
+  return generateCollapsibleElement(title, content, hash, count, isLive);
 }
 
-function generateCollapsibleElement(title, content, count, isLive) {
+function generateCollapsibleElement(title, content, hash, count, isLive) {
   // get template
   const $template = getTemplate('collapsible-element');
 
@@ -127,6 +127,8 @@ function generateCollapsibleElement(title, content, count, isLive) {
   const $badge = $template.find('.badge');
   if (count > 0) {
     $badge.text(count);
+    const url = URL_HASH_FORMAT.format({hash: hash});
+    $badge.click(() => openPageInNewTab(url));
   } else {
     $badge.hide();
   }
@@ -230,6 +232,10 @@ function getModsNameMap() {
 
 function delay(ms) {
   return new Promise(res => setTimeout(res, ms));
+}
+
+function openPageInNewTab(url) {
+  chrome.tabs.create({url: url});
 }
 
 // format of sites
