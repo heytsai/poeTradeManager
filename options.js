@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", listTabs);
 //-- TODO: open urls not in the set?
 
 // constants
-const POE_SEASON = 'Heist'
+const POE_SEASON = 'Ritual'
 const URL_TRADE = 'https://www.pathofexile.com/trade/search';
 const URL_HASH_FORMAT = `${URL_TRADE}/${POE_SEASON}/{hash}`;
 const URL_CRITERIA_SEARCH = `https://www.pathofexile.com/api/trade/search/${POE_SEASON}`;
