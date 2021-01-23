@@ -150,8 +150,99 @@ function generateCollapsibleElement(title, content, hash, count, isLive) {
 async function generateCriteriaDescription(criteria) {
   const modNameMap = await getModsNameMap();
   const replacer = generateCriteriaReplacer(modNameMap);
+  const processedCriteriaString = JSON.stringify(criteria, replacer, 4);
+  const processedCriteria = JSON.parse(processedCriteriaString);
 
-  return JSON.stringify(criteria, replacer, 4);
+  return formatDescription(processedCriteria);
+}
+
+// hardcoded parse method
+function formatDescription(json) {
+  console.log(json)
+  const statsContent = formatStats(json['stats']);
+  const filtersContent = formatFilters(json['filters']);
+  const statsText = `stats\n${statsContent}`;
+  const filtersText = `filters\n${filtersContent}`;
+  return `${filtersText}\n\n${statsText}`;
+}
+
+// hardcoded parse method
+function formatFilters(jsonObj) {
+  const keys = Object.keys(jsonObj);
+  const dataArr = keys.map(key => {
+    return formatFiltersDetails(jsonObj[key]);
+  });
+
+  return dataArr.join('\n');
+}
+
+// hardcoded parse method
+function formatFiltersDetails(jsonObj) {
+  const indent = '\t';
+  const detailsObj = jsonObj['filters'];
+  return indent + optionCriteriaToText(detailsObj);
+}
+
+// hardcoded parse method
+function formatStats(jsonArray) {
+  const indent = '\t';
+  const processedArr = jsonArray.map(obj => {
+    const details = formatStatsDetails(obj.filters);
+    const mainText = rangeCriteriaToText(obj, 'type');
+
+    return indent + mainText + '\n' + details;
+  });
+
+  return processedArr.join('\n');
+}
+
+// hardcoded parse method
+function formatStatsDetails(jsonArray) {
+  const indent = '\t\t';
+  const processedArr = jsonArray.map(obj => {
+    const text = rangeCriteriaToText(obj, 'text');
+
+    return indent + text
+  });
+
+  return processedArr.join('\n');
+}
+
+// hardcoded parse method
+function optionCriteriaToText(jsonObj) {
+  const keys = Object.keys(jsonObj);
+
+  // only take the first key
+  const key = keys[0];
+
+  const detailsObj = jsonObj[key];
+  const optionValue = detailsObj && detailsObj.option;
+  const min = detailsObj && detailsObj.min;
+  const max = detailsObj && detailsObj.max;
+
+  let text;
+  if (optionValue !== null) {
+    text = key + ': ' + optionValue
+  } else {
+    text = key;
+    if (min !== null) text = min + ' <= ' + text
+    if (max !== null) text = text + ' <= ' + max
+  }
+
+  return text;
+}
+
+// hardcoded parse method
+function rangeCriteriaToText(jsonObj, key) {
+  const name = jsonObj[key];
+  let min = jsonObj.value && jsonObj.value.min || null
+  let max = jsonObj.value && jsonObj.value.max || null
+
+  let text = name;
+  if (min !== null) text = min + ' <= ' + text
+  if (max !== null) text = text + ' <= ' + max
+
+  return text;
 }
 
 function getCriteria(hash) {
@@ -181,11 +272,6 @@ function generateCriteriaReplacer(modNameMap) {
     if (value && typeof value === 'object' && 'id' in value) {
       value.text = modNameMap[value.id];
       delete value.id;
-    }
-
-    // flatter option type info
-    if (value && typeof value === 'object' && 'option' in value) {
-      value = value.option;
     }
 
     return value;

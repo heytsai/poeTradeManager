@@ -1,3 +1,7 @@
 .tradeHeader {
     justify-content: space-between;
 }
+
+.collapsible-body .content {
+    white-space: pre-wrap;
+}
